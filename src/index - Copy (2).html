@@ -1,0 +1,333 @@
+<!doctype html>
+<html>
+<head>
+    <title>get-sheet-done demo</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        #theForm {
+            border: 1px solid silver;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        #theForm > div {
+            margin-bottom: 10px;
+        }
+        .label {
+            display: inline-block;
+            width: 150px;
+        }
+        #key {
+            width: 400px;
+            max-width: 100%;
+        }
+        #output {
+            overflow: auto;
+        }
+        .checkboxGroup {
+            display: inline-block;
+            vertical-align: top;
+        }
+    </style>
+
+  <script type='text/javascript' src='https://unpkg.com/fetch-jsonp@1.1.1'></script>
+  <script src="GetSheetDone.js"></script>
+</head >
+      <body>
+
+        <div id="showDataaa">
+        </div>
+        <div id="container" style="margin: 0 auto;height:800px;"></div>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+        <script>
+
+
+          let key,
+            sheetNum,
+            sheetType, counter = 0, cc = 0;
+
+          function readValues() {
+            key = '1iYytiqDgwxm8-kftu7S8jcAumkgc-zL2TXeivUivGhM';
+            sheetNum = '4';
+            sheetType = 'cols';
+          }
+
+          window.onload = function (ev) {
+            ev.preventDefault();
+            readValues();
+            console.log(key, sheetNum, sheetType);
+
+            let promise;
+            switch (sheetType) {
+              case 'cols':
+                promise = GetSheetDone.labeledCols(key, sheetNum);
+                break;
+              case 'cols-rows':
+                promise = GetSheetDone.labeledColsRows(key, sheetNum);
+                break;
+              case 'raw':
+              default:
+                promise = GetSheetDone.raw(key, sheetNum);
+                break;
+            }
+            promise.then((data) => {
+              var jsonarray = JSON.stringify(data);
+              var obj = JSON.parse(jsonarray);
+              var coll = [];
+              for (var i = 0; i < obj.data.length; i++) {
+                for (var ky in obj.data[i]) {
+                  if (coll.indexOf(ky) === -1) {
+                    coll.push(ky);
+                  }
+                }
+              }
+              // CREATE DYNAMIC TABLE.
+              var table = document.getElementById('datatable02');//document.createElement('table');
+              //  table.style.border = "thin solid #a5f448";
+              // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+              var plantlist = obj.data;
+              // document.getElementById('showDataaa').innerHTML = jsonarray;
+              var stationarray = new Array();
+              var ecrarray = new Array();
+
+
+              for (st = 0; st < plantlist.length; st++) {
+                stationarray[st] = plantlist[st].station
+              }
+
+
+
+              for (ec = 0; ec < obj.data.length; ec++) {
+                ecrarray[ec] = parseFloat(obj.data[ec].ecr)
+              }
+
+              Highcharts.chart('container', {
+                chart: {
+                  type: 'bar'
+                },
+                title: {
+                  text: 'Jan, 2018 ECR'
+                },
+                xAxis: {
+                  categories: stationarray
+                },
+                yAxis: {
+                  min: 0,
+                  title: {
+                    text: 'ECR (Rs./KWHr)'
+                  }
+                },
+                legend: {
+                  reversed: true
+                }, credits: {
+                  enabled: false
+                },
+                plotOptions: {
+                  series: {
+                    dataLabels: {
+                      enabled: true,
+                      align: 'left',
+                      color: '#e9ff74',
+                      x: -10,
+                      style: {
+                        fontWeight: 'lighter'
+                      }
+                    },
+                    pointPadding: 10,
+                    groupPadding: 0.4,
+                    pointWidth: 10
+                  }
+                },
+                series: [{
+                  name: 'Jan-2018',
+                  data: ecrarray
+                }]
+              });
+
+
+              // ADD JSON DATA TO THE TABLE AS ROWS.
+            /*  for (var i = 0; i < obj.data.length; i++) {
+
+                if (i == 0) {
+                  tr = table.insertRow(-1);
+
+                  var tabCell0 = tr.insertCell(-1);
+                  tabCell0.style.border = "thin solid #a5f448";
+                  tabCell0.style.backgroundColor = "#3a4c39";
+                  tabCell0.style.color = "#e6fee6";
+                  tabCell0.style.width = "5%";
+                  tabCell0.innerHTML = "Sr No ";
+
+                  var tabCell1 = tr.insertCell(-1);
+                  tabCell1.style.border = "thin solid #a5f448";
+                  tabCell1.style.backgroundColor = "#3a4c39";
+                  tabCell1.style.color = "#e6fee6";
+                  tabCell1.style.width = "10%";
+                  tabCell1.innerHTML = "stationiciary";
+
+                  var tabCell2 = tr.insertCell(-1);
+                  tabCell2.style.border = "thin solid #a5f448";
+                  tabCell2.style.backgroundColor = "#3a4c39";
+                  tabCell2.style.color = "#e6fee6";
+                  tabCell2.innerHTML = "rebatable amount";
+
+                  var tabCell3 = tr.insertCell(-1);
+                  tabCell3.style.border = "thin solid #a5f448";
+                  tabCell3.style.backgroundColor = "#3a4c39";
+                  tabCell3.style.color = "#e6fee6";
+                  tabCell3.innerHTML = "non rebatable amount";
+
+                  var tabCell4 = tr.insertCell(-1);
+                  tabCell4.style.border = "thin solid #a5f448";
+                  tabCell4.style.backgroundColor = "#3a4c39";
+                  tabCell4.style.color = "#e6fee6";
+                  tabCell4.innerHTML = "interest";
+
+                  var tabCell5 = tr.insertCell(-1);
+                  tabCell5.style.border = "thin solid #a5f448";
+                  tabCell5.style.backgroundColor = "#3a4c39";
+                  tabCell5.style.color = "#e6fee6";
+                  tabCell5.innerHTML = "LPSC";
+
+                  var tabCell6 = tr.insertCell(-1);
+                  tabCell6.style.border = "thin solid #a5f448";
+                  tabCell6.style.backgroundColor = "#3a4c39";
+                  tabCell6.style.color = "#e6fee6";
+                  tabCell6.innerHTML = "compensation";
+
+                  var tabCell7 = tr.insertCell(-1);
+                  tabCell7.style.border = "thin solid #a5f448";
+                  tabCell7.style.backgroundColor = "#3a4c39";
+                  tabCell7.style.color = "#e6fee6";
+                  tabCell7.innerHTML = "URS Gain";
+
+                  var tabCell8 = tr.insertCell(-1);
+                  tabCell8.style.border = "thin solid #a5f448";
+                  tabCell8.style.backgroundColor = "#3a4c39";
+                  tabCell8.style.color = "#e6fee6";
+                  tabCell8.innerHTML = "Rebate Adj";
+
+                  var tabCell9 = tr.insertCell(-1);
+                  tabCell9.style.border = "thin solid #a5f448";
+                  tabCell9.style.backgroundColor = "#3a4c39";
+                  tabCell9.style.color = "#e6fee6";
+                  tabCell9.innerHTML = "RRAS_credit";
+
+                  var tabCell10 = tr.insertCell(-1);
+                  tabCell10.style.border = "thin solid #a5f448";
+                  tabCell10.style.backgroundColor = "#3a4c39";
+                  tabCell10.style.color = "#e6fee6";
+                  tabCell10.innerHTML = "Total";
+                }
+                else {
+
+
+
+                  tr = table.insertRow(-1);
+
+                  var tabCell0 = tr.insertCell(-1);
+                  tabCell0.style.border = "thin solid #a5f448";
+                  tabCell0.style.backgroundColor = "#abb5ff";
+                  tabCell0.style.width = "5%";
+                  counter = counter + 1;
+                  tabCell0.innerHTML = counter;
+
+                  var tabCell1 = tr.insertCell(-1);
+                  tabCell1.style.border = "thin solid #a5f448";
+                  tabCell1.style.backgroundColor = "#c9ebff";
+                  tabCell1.style.width = "10%";
+                  tabCell1.innerHTML = obj.data[i].benef;
+
+                  var tabCell3 = tr.insertCell(-1);
+                  tabCell3.style.border = "thin solid #a5f448";
+                  tabCell3.style.backgroundColor = "#e1f8ff";
+                  tabCell3.innerHTML = obj.data[i].rebatableamt;
+
+                  var tabCell4 = tr.insertCell(-1);
+                  tabCell4.style.border = "thin solid #a5f448";
+                  tabCell4.style.backgroundColor = "#e1f8ff";
+                  tabCell4.innerHTML = obj.data[i].nonrebatableamt;
+
+                  var tabCell5 = tr.insertCell(-1);
+                  tabCell5.style.border = "thin solid #a5f448";
+                  tabCell5.style.backgroundColor = "#e1f8ff";
+                  tabCell5.innerHTML = obj.data[i].int;
+
+                  var tabCell6 = tr.insertCell(-1);
+                  tabCell6.style.border = "thin solid #a5f448";
+                  tabCell6.style.backgroundColor = "#e1f8ff";
+                  tabCell6.innerHTML = obj.data[i].lpsc;
+
+                  var tabCell7 = tr.insertCell(-1);
+                  tabCell7.style.border = "thin solid #a5f448";
+                  tabCell7.style.backgroundColor = "#e1f8ff";
+                  tabCell7.innerHTML = obj.data[i].comp;
+
+                  var tabCell8 = tr.insertCell(-1);
+                  tabCell8.style.border = "thin solid #a5f448";
+                  tabCell8.style.backgroundColor = "#e1f8ff";
+                  tabCell8.innerHTML = obj.data[i].ursgain;
+
+                  var tabCell9 = tr.insertCell(-1);
+                  tabCell9.style.border = "thin solid #a5f448";
+                  tabCell9.style.backgroundColor = "#e1f8ff";
+                  tabCell9.innerHTML = obj.data[i].rebateadj;
+
+                  var tabCell10 = tr.insertCell(-1);
+                  tabCell10.style.border = "thin solid #a5f448";
+                  tabCell10.style.backgroundColor = "#e1f8ff";
+                  tabCell10.innerHTML = obj.data[i].rrascredit;
+
+                  var tabCell11 = tr.insertCell(-1);
+                  tabCell11.style.border = "thin solid #a5f448";
+                  tabCell11.style.backgroundColor = "#e1f8ff";
+                  tabCell11.innerHTML = obj.data[i].total;
+                }
+              }*/
+              // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+            }).catch(err => {
+              console.log('Error');
+              console.log(err);
+              document.getElementById('output').innerHTML = err.message;
+            })
+
+
+
+
+
+          }
+
+              // }
+
+
+
+
+
+
+        </script>
+
+
+
+
+        <div id="output">
+        </div>
+
+        <div id="showDatafirst">
+        </div>
+
+
+
+
+        <table id="datatable02" cellpadding="0" cellspacing="0"></table>
+
+        <div id="showData">
+        </div>
+
+
+</body>
+</html>

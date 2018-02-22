@@ -1,0 +1,394 @@
+<!doctype html>
+<html>
+<head>
+    <title>get-sheet-done demo</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        #theForm {
+            border: 1px solid silver;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        #theForm > div {
+            margin-bottom: 10px;
+        }
+        .label {
+            display: inline-block;
+            width: 150px;
+        }
+        #key {
+            width: 400px;
+            max-width: 100%;
+        }
+        #output {
+            overflow: auto;
+        }
+        .checkboxGroup {
+            display: inline-block;
+            vertical-align: top;
+        }
+    </style>
+
+  <script type='text/javascript' src='https://unpkg.com/fetch-jsonp@1.1.1'></script>
+  <script src="GetSheetDone.js"></script>
+    
+    <script src="countUp.js"></script>   
+   
+
+</head >
+      <body>
+          <div id="trading_table" style="width:100%;margin: 0 auto;">
+            <table style="width:100%;text-align:center;">
+                <tr>
+                    <td style="width:50%;text-align:center;font-size:x-large;background-color:#bae1e5;color:#5d7072;">Offered</td>
+                    <td style="width:50%;text-align:center;font-size:x-large;background-color:#c2fec1;color:#749873;">Cleared</td>
+                </tr>
+                <tr>
+                    <td id="offered_in_1718" style="width:50%;text-align:center;font-size:xx-large;background-color:#bae1e5;color:#4a5a5b;">No internet Connection</td>
+                    <td id="cleared_in_1718" style="width:50%;text-align:center;font-size:xx-large;background-color:#c2fec1;color:#4d654d;">no internet connection</td>
+                </tr>
+                <tr>
+                    <td id="update_date" colspan="2" style="text-align:left;color:#9f0000;"></td>
+                </tr>
+            </table>
+          </div>
+          <div id="container" style="margin: 0 auto;height:600px;"></div>
+          <script src="https://code.highcharts.com/highcharts.js"></script>
+          <script src="https://code.highcharts.com/modules/exporting.js"></script>
+          <script>
+
+
+              let key,
+                  sheetNum,
+                  sheetType, counter = 0, cc = 0;
+
+              function readValues() {
+                  key = '1iYytiqDgwxm8-kftu7S8jcAumkgc-zL2TXeivUivGhM';
+                  sheetNum = '1';
+                  sheetType = 'cols';
+              }
+
+              window.onload = function (ev) {
+                  ev.preventDefault();
+                  readValues();
+                  console.log(key, sheetNum, sheetType);
+
+                  let promise;
+                  switch (sheetType) {
+                      case 'cols':
+                          promise = GetSheetDone.labeledCols(key, sheetNum);
+                          break;
+                      case 'cols-rows':
+                          promise = GetSheetDone.labeledColsRows(key, sheetNum);
+                          break;
+                      case 'raw':
+                      default:
+                          promise = GetSheetDone.raw(key, sheetNum);
+                          break;
+                  }
+                  promise.then((data) => {
+                      var jsonarray = JSON.stringify(data);
+                      var obj = JSON.parse(jsonarray);
+                      var coll = [];
+                      for (var i = 0; i < obj.data.length; i++) {
+                          for (var ky in obj.data[i]) {
+                              if (coll.indexOf(ky) === -1) {
+                                  coll.push(ky);
+                              }
+                          }
+                      }
+                      // CREATE DYNAMIC TABLE.
+                     // var table = document.getElementById('datatable01');//document.createElement('table');
+                    //  table.style.border = "thin solid #a5f448";
+                      // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+                      var plantlist = obj.data;
+                      var options = {
+                          useEasing: true,
+                          useGrouping: true,
+                          separator: ',',
+                          decimal: '.',
+                      };
+                      var demo = new CountUp(document.getElementById('offered_in_1718'), 0, parseFloat(plantlist[25].offered), 2, 2.5, options);
+                      if (!demo.error) {
+                          demo.start();
+                      } else {
+                          console.error(demo.error);
+                      }
+                      var demoo = new CountUp(document.getElementById('cleared_in_1718'), 0, parseFloat(plantlist[25].cleared), 2, 2.5, options);
+                      if (!demoo.error) {
+                          demoo.start();
+                      } else {
+                          console.error(demoo.error);
+                      }
+
+                      Highcharts.chart('container', {
+                          chart: {
+                              type: 'bar'
+                          },
+                          title: {
+                              text: 'URS Trading @ IEX'
+                          },
+                          xAxis: {
+                              categories: ['apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec', 'jan', 'feb', 'mar']
+                          },
+                          yAxis: {
+                              min: 0,
+                              title: {
+                                  text: 'Cleared Volume (MUs)'
+                              }
+                          },
+                          legend: {
+                              reversed: true
+                          }, credits: {
+                              enabled: false
+                          },
+                          plotOptions: {
+                              series: {
+                                  dataLabels: {
+                                      enabled: true,
+                                      align: 'right',
+                                      color: '#FFFFFF',
+                                      x: -10,
+                                      style: {
+                                          fontWeight: 'light'
+                                      }
+                                  },
+                                  pointPadding: 0,
+                                  groupPadding: 0.1,
+                                  pointWidth: 20
+                              }
+                          },
+                          series: [{
+                              name: '2016-17',
+                              data: [parseFloat(plantlist[0].cleared), parseFloat(plantlist[1].cleared), parseFloat(plantlist[2].cleared), parseFloat(plantlist[3].cleared), parseFloat(plantlist[4].cleared), parseFloat(plantlist[5].cleared), parseFloat(plantlist[6].cleared), parseFloat(plantlist[7].cleared), parseFloat(plantlist[8].cleared), parseFloat(plantlist[9].cleared), parseFloat(plantlist[10].cleared), parseFloat(plantlist[11].cleared)]
+                          }, {
+                              name: '2017-18',
+                              data: [parseFloat(plantlist[12].cleared), parseFloat(plantlist[13].cleared), parseFloat(plantlist[14].cleared), parseFloat(plantlist[15].cleared), parseFloat(plantlist[16].cleared), parseFloat(plantlist[17].cleared), parseFloat(plantlist[18].cleared), parseFloat(plantlist[19].cleared), parseFloat(plantlist[20].cleared), parseFloat(plantlist[21].cleared), parseFloat(plantlist[22].cleared), parseFloat(plantlist[23].cleared)]
+                          }]
+                      });
+                      // ADD JSON DATA TO THE TABLE AS ROWS.
+                    /*  for (var i = 0; i < obj.data.length; i++) {
+                          tr = table.insertRow(-1);
+
+                          var tabCell0 = tr.insertCell(-1);
+                          tabCell0.style.border = "thin solid #a5f448";
+                          tabCell0.style.backgroundColor = "#abb5ff";
+                          tabCell0.style.width = "5%";
+                          counter = counter + 1;
+                          tabCell0.innerHTML = counter;
+
+                          var tabCell1 = tr.insertCell(-1);
+                          tabCell1.style.border = "thin solid #a5f448";
+                          tabCell1.style.backgroundColor = "#c9ebff";
+                          tabCell1.style.width = "10%";
+                          tabCell1.innerHTML = obj.data[i].year;
+
+                          var tabCell3 = tr.insertCell(-1);
+                          tabCell3.style.border = "thin solid #a5f448";
+                          tabCell3.style.backgroundColor = "#e1f8ff";
+                          tabCell3.innerHTML = obj.data[i].month;
+
+                          var tabCell4 = tr.insertCell(-1);
+                          tabCell4.style.border = "thin solid #a5f448";
+                          tabCell4.style.backgroundColor = "#e1f8ff";
+                          tabCell4.innerHTML = obj.data[i].offered;
+
+                          var tabCell5 = tr.insertCell(-1);
+                          tabCell5.style.border = "thin solid #a5f448";
+                          tabCell5.style.backgroundColor = "#e1f8ff";
+                          tabCell5.innerHTML = obj.data[i].cleared;
+                      }*/
+                      // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+                  }).catch(err => {
+                      console.log('Error');
+                      console.log(err);
+                      document.getElementById('output').innerHTML = err.message;
+                  })
+
+                   
+                 
+                  let promisee;
+                  switch (sheetType) {
+                      case 'cols':
+                          promisee = GetSheetDone.labeledCols(key, '5');
+                          break;
+                      case 'cols-rows':
+                          promisee = GetSheetDone.labeledColsRows(key, '5');
+                          break;
+                      case 'raw':
+                      default:
+                          promisee = GetSheetDone.raw(key, '5');
+                          break;
+                  }
+                  promisee.then((data) => {
+                      var jsonarrayyy = JSON.stringify(data);
+                      var objjj = JSON.parse(jsonarrayyy);
+                      var collll = [];
+                      for (var i = 0; i < objjj.data.length; i++) {
+                          for (var kyy in objjj.data[i]) {
+                              if (collll.indexOf(kyy) === -1) {
+                                  collll.push(kyy);
+                              }
+                          }
+                      }
+                     // document.getElementById('datatable02').innerHTML = objjj.data[0].month;
+
+                      var table1 = document.getElementById('datatable02');//document.createElement('table');
+                      table1.style.border = "thin solid #a5f448";
+
+
+
+
+                      for (var i = 0; i < objjj.data.length; i++) {
+                          if (i == 0) {
+                            tr00 = table1.insertRow(-1);
+
+                            var tabCell00 = tr00.insertCell(-1);
+                            tabCell00.style.border = "thin solid #a5f448";
+                            tabCell00.style.backgroundColor = "#3a4c39";
+                            tabCell00.style.color = "#e6fee6";
+                            tabCell00.style.textAlign = "center";
+                            tabCell00.colSpan = "4";
+                            tabCell00.innerHTML = "URS Tarding at IEX in 2017-18";
+
+                            tr = table1.insertRow(-1);
+
+                              var tabCell0 = tr.insertCell(-1);
+                              tabCell0.style.border = "thin solid #a5f448";
+                              tabCell0.style.backgroundColor = "#3a4c39";
+                              tabCell0.style.color = "#e6fee6";
+                              tabCell0.style.textAlign = "center";
+                              tabCell0.style.width = "5%";
+                              tabCell0.innerHTML = "Sr No ";
+
+                              var tabCell2 = tr.insertCell(-1);
+                              tabCell2.style.border = "thin solid #a5f448";
+                              tabCell2.style.backgroundColor = "#3a4c39";
+                              tabCell2.style.color = "#e6fee6";
+                              tabCell2.style.textAlign = "center";
+                              tabCell2.innerHTML = "station";
+
+                              var tabCell4 = tr.insertCell(-1);
+                              tabCell4.style.border = "thin solid #a5f448";
+                              tabCell4.style.backgroundColor = "#3a4c39";
+                              tabCell4.style.color = "#e6fee6";
+                              tabCell4.style.textAlign = "center";
+                              tabCell4.innerHTML = "Offered (MWHr)";
+
+                              var tabCell5 = tr.insertCell(-1);
+                              tabCell5.style.border = "thin solid #a5f448";
+                              tabCell5.style.backgroundColor = "#3a4c39";
+                              tabCell5.style.color = "#e6fee6";
+                              tabCell5.style.textAlign = "center";
+                              tabCell5.innerHTML = "Cleared (MWHr)";
+                          }
+                          else
+                          {
+                              tr = table1.insertRow(-1);
+
+                              var tabCell0 = tr.insertCell(-1);
+                              tabCell0.style.border = "thin solid #a5f448";
+                              tabCell0.style.backgroundColor = "#abb5ff";
+                              tabCell0.style.width = "5%";
+                              counter = counter + 1;
+                              tabCell0.innerHTML = counter;
+
+                              var tabCell2 = tr.insertCell(-1);
+                              tabCell2.style.border = "thin solid #a5f448";
+                              tabCell2.style.backgroundColor = "#e1f8ff";
+                              tabCell2.innerHTML = objjj.data[i].portfolio;
+
+                              var tabCell4 = tr.insertCell(-1);
+                              tabCell4.style.border = "thin solid #a5f448";
+                              tabCell4.style.backgroundColor = "#e1f8ff";
+                              tabCell4.style.textAlign = "right";
+                              tabCell4.innerHTML = parseFloat(objjj.data[i].bid).toLocaleString('hi');
+
+                              var tabCell5 = tr.insertCell(-1);
+                              tabCell5.style.border = "thin solid #a5f448";
+                              tabCell5.style.backgroundColor = "#e1f8ff";
+                              tabCell5.style.textAlign = "right";
+                              tabCell5.innerHTML = parseFloat(objjj.data[i].exbus).toLocaleString('hi');
+                          }
+                      }
+
+
+                  }).catch(err => {
+                      console.log('Error');
+                      console.log(err);
+                      document.getElementById('output').innerHTML = err.message;
+                  })
+
+
+
+
+                  
+                  let promiseee;
+                  switch (sheetType) {
+                      case 'cols':
+                          promiseee = GetSheetDone.labeledCols(key, '3');
+                          break;
+                      case 'cols-rows':
+                          promiseee = GetSheetDone.labeledColsRows(key, '3');
+                          break;
+                      case 'raw':
+                      default:
+                          promiseee = GetSheetDone.raw(key, '3');
+                          break;
+                  }
+                  promiseee.then((data) => {
+                      var jsonarrayyyy = JSON.stringify(data);
+                      var objjjj = JSON.parse(jsonarrayyyy);
+                      var colllll = [];
+                      for (var i = 0; i < objjjj.data.length; i++) {
+                          for (var kyyy in objjjj.data[i]) {
+                              if (colllll.indexOf(kyyy) === -1) {
+                                  colllll.push(kyyy);
+                              }
+                          }
+                      }
+                      // document.getElementById('datatable02').innerHTML = objjj.data[0].month;
+
+                      document.getElementById('update_date').innerHTML="*data updated till: "+objjjj.data[0].updatedate;//document.createElement('table');
+                     // table1.style.border = "thin solid #a5f448";
+                  }).catch(err => {
+                      console.log('Error');
+                      console.log(err);
+                      document.getElementById('output').innerHTML = err.message;
+                  })
+
+                  
+              }
+
+              // }
+
+
+
+
+
+       
+          </script>
+
+
+
+
+        <div id="output">
+        </div>
+
+<div id="showDatafirst">
+        </div>
+
+
+         
+
+          <table id="datatable02" cellpadding="0" cellspacing="0"></table>
+
+          <div id="showData">
+          </div>
+
+</body>
+</html>

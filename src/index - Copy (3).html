@@ -1,0 +1,211 @@
+<!doctype html>
+<html>
+<head>
+    <title>get-sheet-done demo</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        #theForm {
+            border: 1px solid silver;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        #theForm > div {
+            margin-bottom: 10px;
+        }
+        .label {
+            display: inline-block;
+            width: 150px;
+        }
+        #key {
+            width: 400px;
+            max-width: 100%;
+        }
+        #output {
+            overflow: auto;
+        }
+        .checkboxGroup {
+            display: inline-block;
+            vertical-align: top;
+        }
+    </style>
+
+  <script type='text/javascript' src='https://unpkg.com/fetch-jsonp@1.1.1'></script>
+  <script src="GetSheetDone.js"></script>
+  <script>
+
+        let key,
+            sheetNum,
+            sheetType,counter=0;
+
+     // attachEvents();
+
+        // GetSheetDone(KEY, 1, false, true).then((data) => {
+        //     console.log('Data');
+        //     console.log(JSON.stringify(data));
+        // }).catch(err => {
+        //     console.log('Error');
+        //     console.log(err);
+        // })
+
+        function readValues() {
+          key = '1LLV7wDJMhtzO2XoqUZBKkbuZ-Sev0bCCF8b8OA_iSPA';
+            sheetNum ='2';
+            sheetType = 'cols';
+        }
+
+    
+
+       // $form.submit();
+        //function attachEvents() {
+         // alert("I am an alert box!");
+          //document.getElementById('theForm').submit();
+          window.onload = function (ev) { 
+           // alert("I am an alert boxasdfsadas!");
+             ev.preventDefault();
+            readValues();
+            console.log(key, sheetNum, sheetType);
+
+            let promise;
+            switch (sheetType) {
+              case 'cols':
+                promise = GetSheetDone.labeledCols(key, sheetNum);
+                break;
+              case 'cols-rows':
+                promise = GetSheetDone.labeledColsRows(key, sheetNum);
+                break;
+              case 'raw':
+              default:
+                promise = GetSheetDone.raw(key, sheetNum);
+                break;
+            }
+          //  alert("I am an alert boxasdfsadas!");
+            promise.then((data) => {
+          //    console.log('Data');
+           //   console.log(data);
+            //  document.getElementById('output').innerHTML = JSON.stringify(data.data);
+
+              var jsonarray = JSON.stringify(data);
+              var obj = JSON.parse(jsonarray);
+             // document.getElementById("showDatafirst").innerHTML = obj.title + ", " + obj.updated + ", " + obj.data.length + "</span><br/>";
+
+             // var objjjjj = JSON.parse(obj.data);
+            
+            
+             
+
+
+             // JSON.Array jsonaaarray = new JSONArray(jsonString);
+//document.getElementById('showDatafirst').innerHTML = "</span><br/>" + jsonarray;
+var coll = [];
+for (var i = 0; i < obj.data.length; i++) {
+    for (var ky in obj.data[i]) {
+                if (coll.indexOf(ky) === -1) {
+                    coll.push(ky);
+                }
+            }
+        }
+
+// CREATE DYNAMIC TABLE.
+var table = document.getElementById('datatable01');//document.createElement('table');
+        table.style.border = "thin solid #a5f448";
+        // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+
+      //  var tr = table.insertRow(-1);                   // TABLE ROW.
+
+      /*  for (var i = 0; i < 8; i++) {
+            var th = document.createElement("th");
+            th.style.border = "thin solid #a5f448";
+            if (i == 0 || i == 1 || i == 2 || i == 3 || i == 4 || i == 5 || i == 6)
+            {
+                th.innerHTML = coll[i];
+                tr.appendChild(th);
+            }
+            else if (i == 7) {
+                th.innerHTML = coll[10];
+                tr.appendChild(th);
+            }
+            else
+            {
+                th.innerHTML = "";//coll[i];
+                tr.appendChild(th);
+            }            
+        }
+ */
+        // ADD JSON DATA TO THE TABLE AS ROWS.
+        for (var i = 0; i < obj.data.length; i++) {
+
+            tr = table.insertRow(-1);
+
+
+          //  for (var j = 0; j < 8; j++) {
+           //     var tabCell = tr.insertCell(-1);
+            //    tabCell.style.border = "thin solid #a5f448";
+                
+            
+
+            var tabCell0 = tr.insertCell(-1);
+            tabCell0.style.border = "thin solid #a5f448";
+            tabCell0.style.backgroundColor = "#abb5ff";
+            tabCell0.style.width = "5%";
+                    counter = counter + 1;
+                    tabCell0.innerHTML = counter;
+
+                    var tabCell3 = tr.insertCell(-1);
+                    tabCell3.style.border = "thin solid #a5f448";
+                    tabCell3.style.backgroundColor = "#c9ebff";
+                    tabCell3.style.width = "10%";
+                    tabCell3.innerHTML = obj.data[i].component;
+
+                 var tabCell1 = tr.insertCell(-1);
+                 tabCell1.style.border = "thin solid #a5f448";
+                 tabCell1.style.backgroundColor = "#e1f8ff";
+                 tabCell1.colSpan = "3";
+                    tabCell1.innerHTML = obj.data[i].value;
+          
+                  //  tabCell.innerHTML = obj.data[i].region;
+                    document.getElementById('textarea ').innerHTML = jsonarray;
+          //  }
+        }
+
+        // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+        
+        document.getElementById('showData').innerHTML = '';
+        document.getElementById('showData').appendChild(table);
+
+
+
+            }).catch(err => {
+              console.log('Error');
+              console.log(err);
+              document.getElementById('output').innerHTML = err.message;
+            })
+          }
+
+       // }
+  </script>
+</head >
+      <body>
+        <div id="textarea">
+        </div>
+        <script>
+        </script>
+        <div id="output">
+        </div>
+
+<div id="showDatafirst">
+        </div>
+
+
+          <table id="datatable01" cellpadding="0" cellspacing="0">
+          </table>
+
+        <div id="showData">
+        </div>
+       
+
+</body>
+</html>

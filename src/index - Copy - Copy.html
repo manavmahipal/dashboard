@@ -1,0 +1,394 @@
+﻿<!doctype html>
+<html>
+<head>
+    <title>get-sheet-done demo</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        #theForm {
+            border: 1px solid silver;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        #theForm > div {
+            margin-bottom: 10px;
+        }
+        .label {
+            display: inline-block;
+            width: 150px;
+        }
+        #key {
+            width: 400px;
+            max-width: 100%;
+        }
+        #output {
+            overflow: auto;
+        }
+        .checkboxGroup {
+            display: inline-block;
+            vertical-align: top;
+        }
+    </style>
+
+  <script type='text/javascript' src='https://unpkg.com/fetch-jsonp@1.1.1'></script>
+  <script src="GetSheetDone.js"></script>
+
+</head >
+      <body>
+
+          <div id="showDataaa">
+          </div>
+          <div id="container" style="margin: 0 auto;height:900px;"></div>
+          <script src="https://code.highcharts.com/highcharts.js"></script>
+          <script src="https://code.highcharts.com/modules/exporting.js"></script>
+          <script>
+
+
+              let key,
+                  sheetNum,
+                  sheetType, counter = 0, cc = 0;
+
+              function readValues() {
+                  key = '1GLmA6FKZ166Fq4l0y6CwyEGJopgtcZiIFtyKdU02nvc';
+                  sheetNum = '1';
+                  sheetType = 'cols';
+              }
+
+              window.onload = function (ev) {
+                  ev.preventDefault();
+                  readValues();
+                  console.log(key, sheetNum, sheetType);
+
+                  let promise;
+                  switch (sheetType) {
+                      case 'cols':
+                          promise = GetSheetDone.labeledCols(key, sheetNum);
+                          break;
+                      case 'cols-rows':
+                          promise = GetSheetDone.labeledColsRows(key, sheetNum);
+                          break;
+                      case 'raw':
+                      default:
+                          promise = GetSheetDone.raw(key, sheetNum);
+                          break;
+                  }
+                  promise.then((data) => {
+                      var jsonarray = JSON.stringify(data);
+                      var obj = JSON.parse(jsonarray);
+                      var coll = [];
+                      for (var i = 0; i < obj.data.length; i++) {
+                          for (var ky in obj.data[i]) {
+                              if (coll.indexOf(ky) === -1) {
+                                  coll.push(ky);
+                              }
+                          }
+                      }
+                      // CREATE DYNAMIC TABLE.
+                      var table = document.getElementById('datatable02');//document.createElement('table');
+                    //  table.style.border = "thin solid #a5f448";
+                      // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+                      var plantlist = obj.data;
+                     // document.getElementById('showDataaa').innerHTML = jsonarray;
+                      var int32View = new Float64Array();
+                      var benefSeries = [];
+                      var totalSeries = [];
+                      
+                          
+                      
+                      // ADD JSON DATA TO THE TABLE AS ROWS.
+                      for (var i = 0; i < obj.data.length; i++) {
+                          benefSeries.push(obj.data[i].benef);
+                          totalSeries.push(parseFloat(obj.data[i].total));
+
+                          if (i == 0) {
+                              tr = table.insertRow(-1);
+
+                              var tabCell101 = tr.insertCell(-1);
+                              tabCell101.style.border = "thin solid #a5f448";
+                              tabCell101.style.backgroundColor = "#3a4c39";
+                              tabCell101.style.color = "#e6fee6";
+                              tabCell101.style.width = "5%";
+                              tabCell101.innerHTML = "Sr No ";
+
+                              var tabCell111 = tr.insertCell(-1);
+                              tabCell111.style.border = "thin solid #a5f448";
+                              tabCell111.style.backgroundColor = "#3a4c39";
+                              tabCell111.style.color = "#e6fee6";
+                              tabCell111.style.width = "10%";
+                              tabCell111.innerHTML = "Beneficiary";
+
+                              var tabCell12 = tr.insertCell(-1);
+                              tabCell12.style.border = "thin solid #a5f448";
+                              tabCell12.style.backgroundColor = "#3a4c39";
+                              tabCell12.style.color = "#e6fee6";
+                              tabCell12.innerHTML = "rebatable amount (Rs.-lacs)";
+
+                              var tabCell13 = tr.insertCell(-1);
+                              tabCell13.style.border = "thin solid #a5f448";
+                              tabCell13.style.backgroundColor = "#3a4c39";
+                              tabCell13.style.color = "#e6fee6";
+                              tabCell13.innerHTML = "non rebatable amount (Rs.-lacs)";
+
+                              var tabCell14 = tr.insertCell(-1);
+                              tabCell14.style.border = "thin solid #a5f448";
+                              tabCell14.style.backgroundColor = "#3a4c39";
+                              tabCell14.style.color = "#e6fee6";
+                              tabCell14.innerHTML = "interest (Rs.-lacs)";
+
+                              var tabCell15 = tr.insertCell(-1);
+                              tabCell15.style.border = "thin solid #a5f448";
+                              tabCell15.style.backgroundColor = "#3a4c39";
+                              tabCell15.style.color = "#e6fee6";
+                              tabCell15.innerHTML = "LPSC (Rs.-lacs)";
+
+                              var tabCell16 = tr.insertCell(-1);
+                              tabCell16.style.border = "thin solid #a5f448";
+                              tabCell16.style.backgroundColor = "#3a4c39";
+                              tabCell16.style.color = "#e6fee6";
+                              tabCell16.innerHTML = "compensation (Rs.-lacs)";
+
+                              var tabCell17 = tr.insertCell(-1);
+                              tabCell17.style.border = "thin solid #a5f448";
+                              tabCell17.style.backgroundColor = "#3a4c39";
+                              tabCell17.style.color = "#e6fee6";
+                              tabCell17.innerHTML = "URS Gain (Rs.-lacs)";
+
+                              var tabCell18 = tr.insertCell(-1);
+                              tabCell18.style.border = "thin solid #a5f448";
+                              tabCell18.style.backgroundColor = "#3a4c39";
+                              tabCell18.style.color = "#e6fee6";
+                              tabCell18.innerHTML = "Rebate Adj (Rs.-lacs)";
+
+                              var tabCell19 = tr.insertCell(-1);
+                              tabCell19.style.border = "thin solid #a5f448";
+                              tabCell19.style.backgroundColor = "#3a4c39";
+                              tabCell19.style.color = "#e6fee6";
+                              tabCell19.innerHTML = "RRAS_credit (Rs.-lacs)";
+
+                              var tabCell110 = tr.insertCell(-1);
+                              tabCell110.style.border = "thin solid #a5f448";
+                              tabCell110.style.backgroundColor = "#3a4c39";
+                              tabCell110.style.color = "#e6fee6";
+                              tabCell110.innerHTML = "Total (Rs.-lacs)";
+
+
+
+                              tr = table.insertRow(-1);
+
+                              var tabCell0 = tr.insertCell(-1);
+                              tabCell0.style.border = "thin solid #a5f448";
+                              tabCell0.style.backgroundColor = "#abb5ff";
+                              tabCell0.style.width = "5%";
+                              counter = counter + 1;
+                              tabCell0.innerHTML = counter;
+
+                              var tabCell1 = tr.insertCell(-1);
+                              tabCell1.style.border = "thin solid #a5f448";
+                              tabCell1.style.backgroundColor = "#c9ebff";
+                              tabCell1.style.width = "10%";
+                              tabCell1.innerHTML = obj.data[i].benef;
+
+                              var tabCell3 = tr.insertCell(-1);
+                              tabCell3.style.border = "thin solid #a5f448";
+                              tabCell3.style.backgroundColor = "#e1f8ff";
+                              tabCell3.innerHTML = obj.data[i].rebatableamt;
+
+                              var tabCell4 = tr.insertCell(-1);
+                              tabCell4.style.border = "thin solid #a5f448";
+                              tabCell4.style.backgroundColor = "#e1f8ff";
+                              tabCell4.innerHTML = obj.data[i].nonrebatableamt;
+
+                              var tabCell5 = tr.insertCell(-1);
+                              tabCell5.style.border = "thin solid #a5f448";
+                              tabCell5.style.backgroundColor = "#e1f8ff";
+                              tabCell5.innerHTML = obj.data[i].int;
+
+                              var tabCell6 = tr.insertCell(-1);
+                              tabCell6.style.border = "thin solid #a5f448";
+                              tabCell6.style.backgroundColor = "#e1f8ff";
+                              tabCell6.innerHTML = obj.data[i].lpsc;
+
+                              var tabCell7 = tr.insertCell(-1);
+                              tabCell7.style.border = "thin solid #a5f448";
+                              tabCell7.style.backgroundColor = "#e1f8ff";
+                              tabCell7.innerHTML = obj.data[i].comp;
+
+                              var tabCell8 = tr.insertCell(-1);
+                              tabCell8.style.border = "thin solid #a5f448";
+                              tabCell8.style.backgroundColor = "#e1f8ff";
+                              tabCell8.innerHTML = obj.data[i].ursgain;
+
+                              var tabCell9 = tr.insertCell(-1);
+                              tabCell9.style.border = "thin solid #a5f448";
+                              tabCell9.style.backgroundColor = "#e1f8ff";
+                              tabCell9.innerHTML = obj.data[i].rebateadj;
+
+                              var tabCell10 = tr.insertCell(-1);
+                              tabCell10.style.border = "thin solid #a5f448";
+                              tabCell10.style.backgroundColor = "#e1f8ff";
+                              tabCell10.innerHTML = obj.data[i].rrascredit;
+
+                              var tabCell11 = tr.insertCell(-1);
+                              tabCell11.style.border = "thin solid #a5f448";
+                              tabCell11.style.backgroundColor = "#e1f8ff";
+                              tabCell11.innerHTML = obj.data[i].total;
+
+                          }
+                          else {
+
+
+
+                              tr = table.insertRow(-1);
+
+                              var tabCell0 = tr.insertCell(-1);
+                              tabCell0.style.border = "thin solid #a5f448";
+                              tabCell0.style.backgroundColor = "#abb5ff";
+                              tabCell0.style.width = "5%";
+                              counter = counter + 1;
+                              tabCell0.innerHTML = counter;
+
+                              var tabCell1 = tr.insertCell(-1);
+                              tabCell1.style.border = "thin solid #a5f448";
+                              tabCell1.style.backgroundColor = "#c9ebff";
+                              tabCell1.style.width = "10%";
+                              tabCell1.innerHTML = obj.data[i].benef;
+
+                              var tabCell3 = tr.insertCell(-1);
+                              tabCell3.style.border = "thin solid #a5f448";
+                              tabCell3.style.backgroundColor = "#e1f8ff";
+                              tabCell3.innerHTML = obj.data[i].rebatableamt;
+
+                              var tabCell4 = tr.insertCell(-1);
+                              tabCell4.style.border = "thin solid #a5f448";
+                              tabCell4.style.backgroundColor = "#e1f8ff";
+                              tabCell4.innerHTML = obj.data[i].nonrebatableamt;
+
+                              var tabCell5 = tr.insertCell(-1);
+                              tabCell5.style.border = "thin solid #a5f448";
+                              tabCell5.style.backgroundColor = "#e1f8ff";
+                              tabCell5.innerHTML = obj.data[i].int;
+
+                              var tabCell6 = tr.insertCell(-1);
+                              tabCell6.style.border = "thin solid #a5f448";
+                              tabCell6.style.backgroundColor = "#e1f8ff";
+                              tabCell6.innerHTML = obj.data[i].lpsc;
+
+                              var tabCell7 = tr.insertCell(-1);
+                              tabCell7.style.border = "thin solid #a5f448";
+                              tabCell7.style.backgroundColor = "#e1f8ff";
+                              tabCell7.innerHTML = obj.data[i].comp;
+
+                              var tabCell8 = tr.insertCell(-1);
+                              tabCell8.style.border = "thin solid #a5f448";
+                              tabCell8.style.backgroundColor = "#e1f8ff";
+                              tabCell8.innerHTML = obj.data[i].ursgain;
+
+                              var tabCell9 = tr.insertCell(-1);
+                              tabCell9.style.border = "thin solid #a5f448";
+                              tabCell9.style.backgroundColor = "#e1f8ff";
+                              tabCell9.innerHTML = obj.data[i].rebateadj;
+
+                              var tabCell10 = tr.insertCell(-1);
+                              tabCell10.style.border = "thin solid #a5f448";
+                              tabCell10.style.backgroundColor = "#e1f8ff";
+                              tabCell10.innerHTML = obj.data[i].rrascredit;
+
+                              var tabCell11 = tr.insertCell(-1);
+                              tabCell11.style.border = "thin solid #a5f448";
+                              tabCell11.style.backgroundColor = "#e1f8ff";
+                              tabCell11.innerHTML = obj.data[i].total;
+                          }
+                      }
+                      // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+
+
+                      Highcharts.chart('container', {
+                          chart: {
+                              type: 'bar'
+                          },
+                          title: {
+                              text: 'Feb, 2018 BILLING'
+                          },
+                          xAxis: {
+                              categories: benefSeries//[plantlist[0].benef, plantlist[1].benef, plantlist[2].benef, plantlist[3].benef, plantlist[4].benef, plantlist[5].benef, plantlist[6].benef, plantlist[7].benef, plantlist[8].benef, plantlist[9].benef, plantlist[10].benef, plantlist[11].benef, plantlist[12].benef, plantlist[13].benef, plantlist[14].benef, plantlist[15].benef, plantlist[16].benef, plantlist[17].benef, plantlist[18].benef, plantlist[19].benef, plantlist[20].benef, plantlist[21].benef, plantlist[22].benef, plantlist[23].benef, plantlist[24].benef, plantlist[25].benef, plantlist[26].benef, plantlist[27].benef]
+                          },
+                          yAxis: {
+                              min: 0,
+                              title: {
+                                  text: 'Bill (Rs.-(lacs).)'
+                              }
+                          },
+                          legend: {
+                              reversed: true
+                          }, credits: {
+                              enabled: false
+                          },
+                          plotOptions: {
+                              series: {
+                                  dataLabels: {
+                                      enabled: true,
+                                      align: 'left',
+                                      color: '#e9ff74',
+                                      x: -10,
+                                      style: {
+                                          fontWeight: 'lighter'
+                                      }
+                                  },
+                                  pointPadding: 0.5,
+                                  groupPadding: 0.1,
+                                  pointWidth: 15
+                              }
+                          },
+                          series: [{
+                              name: 'Feb-2018',
+                              data: totalSeries//[parseFloat(plantlist[0].total), parseFloat(plantlist[1].total), parseFloat(plantlist[2].total), parseFloat(plantlist[3].total), parseFloat(plantlist[4].total), parseFloat(plantlist[5].total), parseFloat(plantlist[6].total), parseFloat(plantlist[7].total), parseFloat(plantlist[8].total), parseFloat(plantlist[9].total), parseFloat(plantlist[10].total), parseFloat(plantlist[11].total), parseFloat(plantlist[12].total), parseFloat(plantlist[13].total), parseFloat(plantlist[14].total), parseFloat(plantlist[15].total), parseFloat(plantlist[16].total), parseFloat(plantlist[17].total), parseFloat(plantlist[18].total), parseFloat(plantlist[19].total), parseFloat(plantlist[20].total), parseFloat(plantlist[21].total), parseFloat(plantlist[22].total), parseFloat(plantlist[23].total), parseFloat(plantlist[24].total), parseFloat(plantlist[25].total), parseFloat(plantlist[26].total), parseFloat(plantlist[27].total)]
+                          }]
+                      });
+
+                    
+//
+
+                  }).catch(err => {
+                      console.log('Error');
+                      console.log(err);
+                      document.getElementById('output').innerHTML = err.message;
+                  })
+
+
+
+                  
+              }
+
+              // }
+
+
+
+
+
+       
+          </script>
+
+
+
+
+        <div id="output">
+        </div>
+
+<div id="showDatafirst">
+        </div>
+
+
+         
+
+          <table id="datatable02" cellpadding="0" cellspacing="0"></table>
+
+          <div id="showData">
+          </div>
+
+          <div id="totalarray">
+          </div>
+</body>
+</html>

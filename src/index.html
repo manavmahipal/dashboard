@@ -1,0 +1,561 @@
+﻿<!doctype html>
+<html>
+<head>
+    <title>get-sheet-done demo</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        #theForm {
+            border: 1px solid silver;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        #theForm > div {
+            margin-bottom: 10px;
+        }
+        .label {
+            display: inline-block;
+            width: 150px;
+        }
+        #key {
+            width: 400px;
+            max-width: 100%;
+        }
+        #output {
+            overflow: auto;
+        }
+        .checkboxGroup {
+            display: inline-block;
+            vertical-align: top;
+        }
+    </style>
+
+  <script type='text/javascript' src='https://unpkg.com/fetch-jsonp@1.1.1'></script>
+  <script src="GetSheetDone.js"></script>
+  <script>
+
+        let key,
+            sheetNum,
+            sheetType,counter=0;
+
+     // attachEvents();
+
+        // GetSheetDone(KEY, 1, false, true).then((data) => {
+        //     console.log('Data');
+        //     console.log(JSON.stringify(data));
+        // }).catch(err => {
+        //     console.log('Error');
+        //     console.log(err);
+        // })
+
+        function readValues() {
+          key = '1YTIxCZJL09LWG-MZh9n0XCW4WzaLdL-BM0GKnR4RXgE';
+            sheetNum ='1';
+            sheetType = 'cols';
+        }
+       // $form.submit();
+        //function attachEvents() {
+         // alert("I am an alert box!");
+          //document.getElementById('theForm').submit();
+          window.onload = function (ev) { 
+           // alert("I am an alert boxasdfsadas!");
+             ev.preventDefault();
+            readValues();
+            console.log(key, sheetNum, sheetType);
+
+            let promise;
+            switch (sheetType) {
+              case 'cols':
+                promise = GetSheetDone.labeledCols(key, sheetNum);
+                break;
+              case 'cols-rows':
+                promise = GetSheetDone.labeledColsRows(key, sheetNum);
+                break;
+              case 'raw':
+              default:
+                promise = GetSheetDone.raw(key, sheetNum);
+                break;
+            }
+          //  alert("I am an alert boxasdfsadas!");
+            promise.then((data) => {
+          //    console.log('Data');
+           //   console.log(data);
+            //  document.getElementById('output').innerHTML = JSON.stringify(data.data);
+
+              var jsonarray = JSON.stringify(data);
+              var obj = JSON.parse(jsonarray);
+             // document.getElementById("showDatafirst").innerHTML = obj.title + ", " + obj.updated + ", " + obj.data.length + "</span><br/>";
+
+             // var objjjjj = JSON.parse(obj.data);
+            
+            
+             
+
+
+             // JSON.Array jsonaaarray = new JSONArray(jsonString);
+//document.getElementById('showDatafirst').innerHTML = "</span><br/>" + jsonarray;
+var coll = [];
+for (var i = 0; i < obj.data.length; i++) {
+    for (var ky in obj.data[i]) {
+                if (coll.indexOf(ky) === -1) {
+                    coll.push(ky);
+                }
+            }
+        }
+
+// CREATE DYNAMIC TABLE.
+var table = document.getElementById('datatable01');//document.createElement('table');
+        table.style.border = "thin solid #a5f448";
+        // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+
+      //  var tr = table.insertRow(-1);                   // TABLE ROW.
+
+      /*  for (var i = 0; i < 8; i++) {
+            var th = document.createElement("th");
+            th.style.border = "thin solid #a5f448";
+            if (i == 0 || i == 1 || i == 2 || i == 3 || i == 4 || i == 5 || i == 6)
+            {
+                th.innerHTML = coll[i];
+                tr.appendChild(th);
+            }
+            else if (i == 7) {
+                th.innerHTML = coll[10];
+                tr.appendChild(th);
+            }
+            else
+            {
+                th.innerHTML = "";//coll[i];
+                tr.appendChild(th);
+            }            
+        }
+ */
+        // ADD JSON DATA TO THE TABLE AS ROWS.
+        for (var i = 0; i < obj.data.length; i++) {
+
+            tr = table.insertRow(-1);
+
+
+          //  for (var j = 0; j < 8; j++) {
+           //     var tabCell = tr.insertCell(-1);
+            //    tabCell.style.border = "thin solid #a5f448";
+                
+            
+
+            var tabCell0 = tr.insertCell(-1);
+            tabCell0.style.border = "thin solid #a5f448";
+            tabCell0.style.backgroundColor = "#abb5ff";
+            tabCell0.style.width = "5%";
+                    counter = counter + 1;
+                    tabCell0.innerHTML = counter;
+
+                    var tabCell3 = tr.insertCell(-1);
+                    tabCell3.style.border = "thin solid #a5f448";
+                    tabCell3.style.backgroundColor = "#c9ebff";
+                    tabCell3.style.width = "10%";
+                    tabCell3.innerHTML = obj.data[i].region;
+
+                 var tabCell1 = tr.insertCell(-1);
+                 tabCell1.style.border = "thin solid #a5f448";
+                 tabCell1.style.backgroundColor = "#e1f8ff";
+                 tabCell1.colSpan = "3";
+                    tabCell1.innerHTML = obj.data[i].title;
+
+                    tr1 = table.insertRow(-1);
+                    var tabCell2 = tr1.insertCell(-1);
+                    tabCell2.style.border = "thin solid #a5f448";
+                    tabCell2.style.backgroundColor = "#e9ff74";
+                    tabCell2.colSpan = "5";
+                    tabCell2.innerHTML ="<b>Desciption : </b><br/>"+ obj.data[i].descrip;
+
+                    tr2 = table.insertRow(-1);
+                    var tabCell4 = tr2.insertCell(-1);
+                    tabCell4.style.border = "thin solid #a5f448";
+                    tabCell4.style.backgroundColor = "#f6ffc7";
+                    tabCell4.style.width = "33%";
+                    tabCell4.colSpan = "3";
+                    if (obj.data[i].ref == "01-01-1900")
+                        tabCell4.innerHTML = "Ref -";
+                    else
+                        tabCell4.innerHTML = "Ref -" + obj.data[i].ref;
+
+                    var tabCell5 = tr2.insertCell(-1);
+                    tabCell5.style.border = "thin solid #a5f448";
+                    tabCell5.style.backgroundColor = "#f6ffc7";
+                    if (obj.data[i].target == "01-01-1900")
+                        tabCell5.innerHTML = "Target -";
+                    else
+                        tabCell5.innerHTML = "Target -" + obj.data[i].target;
+
+                    var tabCell6 = tr2.insertCell(-1);
+                    tabCell6.style.border = "thin solid #a5f448";
+                    tabCell6.style.backgroundColor = "#f6ffc7";
+                    if (obj.data[i].actual == "01-01-1900")
+                        tabCell6.innerHTML = "Actual -";
+                    else
+                        tabCell6.innerHTML = "Actual -" + obj.data[i].actual;
+
+                    
+                    if (obj.data[i].comments == "") {
+                        //tabCell7.innerHTML = obj.data[i].comments;
+                        tr3 = table.insertRow(-1);
+                        var tabCell7 = tr3.insertCell(-1);
+                        tabCell7.style.border = "thin solid #a5f448";
+                        tabCell7.style.backgroundColor = "#d1ffb9";
+                        tabCell7.colSpan = "5";
+
+                        tabCell7.innerHTML += "<b>Comments : </b><br/>";
+                    }
+                    else {
+                        tr3 = table.insertRow(-1);
+                        var tabCell7 = tr3.insertCell(-1);
+                        tabCell7.style.border = "thin solid #a5f448";
+                        tabCell7.style.backgroundColor = "#d1ffb9";
+                        tabCell7.colSpan = "5";
+                        var comment_str = "";
+                        var temp = new Array();
+                        // this will return an array with strings "1", "2", etc.
+                        temp = obj.data[i].comments.split("~");
+                        for (kkk = 1; kkk < temp.length; kkk++) {
+                            var temp2 = new Array();
+                            // this will return an array with strings "1", "2", etc.
+                            temp2 = temp[kkk].split("^");
+
+                            if (temp2[1] == "6747")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Abhasha Ranjan Mohanty)</span><br/>";
+                            else if (temp2[1] == "4425")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Abhay Kumar Srivastava)</span><br/>";
+                            else if (temp2[1] == "7003")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (ABHIJIT MAJUMDER)</span><br/>";
+                            else if (temp2[1] == "77038")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Ajai Singh Kachhwaha)</span><br/>";
+                            else if (temp2[1] == "5137")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Ajay Dua)</span><br/>";
+                            else if (temp2[1] == "8395")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Amit Arora)</span><br/>";
+                            else if (temp2[1] == "739")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Anand Kumar Gupta)</span><br/>";
+                            else if (temp2[1] == "2694")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Anil Nautiyal)</span><br/>";
+                            else if (temp2[1] == "101446")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (ANJUM KHURSHID ZARGAR)</span><br/>";
+                            else if (temp2[1] == "7152")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Anthony Arulanandam)</span><br/>";
+                            else if (temp2[1] == "7152")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Anthony Arulanandam)</span><br/>";
+                            else if (temp2[1] == "7586")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Arvind Patle)</span><br/>";
+                            else if (temp2[1] == "3750")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Ashish Kundu)</span><br/>";
+                            else if (temp2[1] == "2683")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Ashok Bhatnagar)</span><br/>";
+                            else if (temp2[1] == "2276")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Ashok Kumar Gupta)</span><br/>";
+                            else if (temp2[1] == "1577")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Atish Basu Roy)</span><br/>";
+                            else if (temp2[1] == "58308")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Atul Mathur)</span><br/>";
+                            else if (temp2[1] == "7164")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (B Aji)</span><br/>";
+                            else if (temp2[1] == "4645")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (B. Ramesh)</span><br/>";
+                            else if (temp2[1] == "9304")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (BINITA NANDINI SAHOO)</span><br/>";
+                            else if (temp2[1] == "2774")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Brij Mohan Gulati)</span><br/>";
+                            else if (temp2[1] == "101448")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Chandan Goyal)</span><br/>";
+                            else if (temp2[1] == "9594")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (DEEPAK KUMAR SINGH)</span><br/>";
+                            else if (temp2[1] == "8633")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (DEEPTI KSHITIJ SHIDDAM)</span><br/>";
+                            else if (temp2[1] == "1757")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Dev Dutt)</span><br/>";
+                            else if (temp2[1] == "7172")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Dharamveer Jassi)</span><br/>";
+                            else if (temp2[1] == "7462")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Faisal Ahmad)</span><br/>";
+                            else if (temp2[1] == "87179")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Ganesh Shantilal Galiyal)</span><br/>";
+                            else if (temp2[1] == "95523")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Girish Chandra Mohapatra)</span><br/>";
+                            else if (temp2[1] == "2024")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Gyan Prabha)</span><br/>";
+                            else if (temp2[1] == "68624")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Hari Singh Meena)</span><br/>";
+                            else if (temp2[1] == "101875")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (HEENA CHAUHAN)</span><br/>";
+                            else if (temp2[1] == "2745")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Hiranand Harchandani)</span><br/>";
+                            else if (temp2[1] == "13359")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (HITESH RASTOGI)</span><br/>";
+                            else if (temp2[1] == "5825")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Ishpaul Uppal)</span><br/>";
+                            else if (temp2[1] == "7133")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (J Malhotra)</span><br/>";
+                            else if (temp2[1] == "7434")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Jatinderjit Singh Mann)</span><br/>";
+                            else if (temp2[1] == "7915")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Jayakumar Chellappan Pillai)</span><br/>";
+                            else if (temp2[1] == "101244")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Jyotirmayee Raj)</span><br/>";
+                            else if (temp2[1] == "2692")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Kallol Sarkar)</span><br/>";
+                            else if (temp2[1] == "8413")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Kalyani Kimidi)</span><br/>";
+                            else if (temp2[1] == "3559")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Kamalesh Bahadur Singh)</span><br/>";
+                            else if (temp2[1] == "54912")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Kanwal Jit Singh Roddey)</span><br/>";
+                            else if (temp2[1] == "70723")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Krishna Kumar Sinha)</span><br/>";
+                            else if (temp2[1] == "100957")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (KRISHNO TISSO)</span><br/>";
+                            else if (temp2[1] == "8448")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Lokesh Kumar Sharma)</span><br/>";
+                            else if (temp2[1] == "9944")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (MAHIPAL MANAV)</span><br/>";
+                            else if (temp2[1] == "1799")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Mammen J.)</span><br/>";
+                            else if (temp2[1] == "6967")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Manish Jain)</span><br/>";
+                            else if (temp2[1] == "6829")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Manish Kumar Jain)</span><br/>";
+                            else if (temp2[1] == "7436")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Manish Kumar Malviya)</span><br/>";
+                            else if (temp2[1] == "6829")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Manish Kumar Jain)</span><br/>";
+                            else if (temp2[1] == "7436")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Manish Kumar Malviya)</span><br/>";
+                            else if (temp2[1] == "6958")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Manish Kumar Verma)</span><br/>";
+                            else if (temp2[1] == "7831")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Manoj Kumar Sharma)</span><br/>";
+                            else if (temp2[1] == "2862")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Manoj Mathur)</span><br/>";
+                            else if (temp2[1] == "2651")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (N N Sadasivan)</span><br/>";
+                            else if (temp2[1] == "1590")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Nagasubramanian R)</span><br/>";
+                            else if (temp2[1] == "5565")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Nazish Qureshi)</span><br/>";
+                            else if (temp2[1] == "101218")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (NEERAJ KUMAR)</span><br/>";
+                            else if (temp2[1] == "45047")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (NISHANT GUPTA)</span><br/>";
+                            else if (temp2[1] == "45047")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (NISHANT GUPTA)</span><br/>";
+                            else if (temp2[1] == "6220")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (P. B Venkatesh)</span><br/>";
+                            else if (temp2[1] == "7301")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Parimal Piyush)</span><br/>";
+                            else if (temp2[1] == "27069")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Parmjit Kohli)</span><br/>";
+                            else if (temp2[1] == "101427")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (PATANJALI DIKSHIT)</span><br/>";
+                            else if (temp2[1] == "5554")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Prabhakara Rao Evani)</span><br/>";
+                            else if (temp2[1] == "1307")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Pramod Kumar)</span><br/>";
+                            else if (temp2[1] == "55158")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Pranav Kapoor)</span><br/>";
+                            else if (temp2[1] == "7102")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Prashant  Chaturvedi)</span><br/>";
+                            else if (temp2[1] == "6255")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Pravat Ranjan Jena)</span><br/>";
+                            else if (temp2[1] == "3931")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Pravin Anantrao Pande)</span><br/>";
+                            else if (temp2[1] == "3136")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Prithvi Raj Batra)</span><br/>";
+                            else if (temp2[1] == "7978")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Rajani Kant Gupta)</span><br/>";
+                            else if (temp2[1] == "12794")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Rajeev Bakliwal)</span><br/>";
+                            else if (temp2[1] == "7898")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Rajiv Kumar)</span><br/>";
+                            else if (temp2[1] == "20275")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Rakesh Chopra)</span><br/>";
+                            else if (temp2[1] == "4792")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Rakesh Kumar Sood)</span><br/>";
+                            else if (temp2[1] == "57719")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Rakesh Pandey)</span><br/>";
+                            else if (temp2[1] == "5236")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> - (Rohit Chhabra)</span><br/>";
+                            else if (temp2[1] == "101800")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (ROHIT LADHA)</span><br/>";
+                            else if (temp2[1] == "7148")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Sachin Jain)</span><br/>";
+                            else if (temp2[1] == "5429")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Sandeep Naik)</span><br/>";
+                            else if (temp2[1] == "3318")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Saroj Kumar Mandal)</span><br/>";
+                            else if (temp2[1] == "1300")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Sashi Kanta Kar)</span><br/>";
+                            else if (temp2[1] == "7146")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Shailendra Singh)</span><br/>";
+                            else if (temp2[1] == "4350")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Shambhu Deo Jha)</span><br/>";
+                            else if (temp2[1] == "4596")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Shankar Saran)</span><br/>";
+                            else if (temp2[1] == "9869")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Shivashish Bhattacharjee)</span><br/>";
+                            else if (temp2[1] == "5526")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Shyam Kumar)</span><br/>";
+                            else if (temp2[1] == "31816")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Sudershan K)</span><br/>";
+                            else if (temp2[1] == "55102")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Sudesh Kumar Jain)</span><br/>";
+                            else if (temp2[1] == "78540")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Sukesh Mohan)</span><br/>";
+                            else if (temp2[1] == "9800")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (SUKHJINDER SINGH)</span><br/>";
+                            else if (temp2[1] == "6558")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Sunit Kumar)</span><br/>";
+                            else if (temp2[1] == "42089")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (SURAVEE TRIPATHY)</span><br/>";
+                            else if (temp2[1] == "77125")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Surendra Sharma)</span><br/>";
+                            else if (temp2[1] == "7025")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Surya Prakash Kesarwani)</span><br/>";
+                            else if (temp2[1] == "100940")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (SUSHEEL CHAND)</span><br/>";
+                            else if (temp2[1] == "41753")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Tarit Kumar Bangal)</span><br/>";
+                            else if (temp2[1] == "90766")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Uma Shankar Mohanty)</span><br/>";
+                            else if (temp2[1] == "6962")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Umesh Ambati)</span><br/>";
+                            else if (temp2[1] == "6962")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Umesh Ambati)</span><br/>";
+                            else if (temp2[1] == "5628")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (V P Ramachandran)</span><br/>";
+                            else if (temp2[1] == "103529")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (VAIBHAV SHUKLA)</span><br/>";
+                            else if (temp2[1] == "20500")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Venkatesh R.)</span><br/>";
+                            else if (temp2[1] == "7318")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Vikas Kr Saxena)</span><br/>";
+                            else if (temp2[1] == "7280")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Vinay Kumar Garg)</span><br/>";
+                            else if (temp2[1] == "6571")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Vinod Kumar Jain)</span><br/>";
+                            else if (temp2[1] == "100568")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (VIVEK KUMAR)</span><br/>";
+                            else if (temp2[1] == "3162")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (a jayanand)</span><br/>";
+                            else if (temp2[1] == "8572")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (abhinav jindal)</span><br/>";
+                            else if (temp2[1] == "100355")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (arjun singhal)</span><br/>";
+                            else if (temp2[1] == "18953")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (aruna c)</span><br/>";
+                            else if (temp2[1] == "4030")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (bishwajeet roy)</span><br/>";
+                            else if (temp2[1] == "61409")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (deepak kumar srivastava)</span><br/>";
+                            else if (temp2[1] == "7132")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (dheeraj jain)</span><br/>";
+                            else if (temp2[1] == "41345")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (dinesh Prasad Gupta)</span><br/>";
+                            else if (temp2[1] == "60879")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (ghanshyam singh)</span><br/>";
+                            else if (temp2[1] == "27511")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (hemant d sarjekar)</span><br/>";
+                            else if (temp2[1] == "70349")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (kaliyaperumal mathiyazhagan)</span><br/>";
+                            else if (temp2[1] == "4928")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (kanchan madaan)</span><br/>";
+                            else if (temp2[1] == "91015")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Mamta)</span><br/>";
+                            else if (temp2[1] == "78558")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (Muraleedharan Achuthan Pillai)</span><br/>";
+                            else if (temp2[1] == "61397")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (naresh kumar sachdeva)</span><br/>";
+                            else if (temp2[1] == "100451")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (preeti benjwal)</span><br/>";
+                            else if (temp2[1] == "90306")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (rajendra ram)</span><br/>";
+                            else if (temp2[1] == "57484")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (rajesh singh mavi)</span><br/>";
+                            else if (temp2[1] == "90519")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (ram chandra prasad)</span><br/>";
+                            else if (temp2[1] == "90520")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (ram pariksha singh)</span><br/>";
+                            else if (temp2[1] == "1907")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (rattan singh)</span><br/>";
+                            else if (temp2[1] == "41176")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (sagar kumar dutta)</span><br/>";
+                            else if (temp2[1] == "253007")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (samir haloi)</span><br/>";
+                            else if (temp2[1] == "4727")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (shashi nagpal)</span><br/>";
+                            else if (temp2[1] == "102435")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (sheela kumari)</span><br/>";
+                            else if (temp2[1] == "77147")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (sitaram morya)</span><br/>";
+                            else if (temp2[1] == "38631")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (subha srinivasan)</span><br/>";
+                            else if (temp2[1] == "4681")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (sudesh jagota)</span><br/>";
+                            else if (temp2[1] == "2264")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (sujoy das verma)</span><br/>";
+                            else if (temp2[1] == "2811")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (surendra kumar sharma)</span><br/>";
+                            else if (temp2[1] == "57007")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (swami pratap singh)</span><br/>";
+                            else if (temp2[1] == "2813")
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (ujjwal kanti bhattacharya)</span><br/>";
+                            else
+                                tabCell7.innerHTML += "<b>Comments : </b><br/><span style=\"color:#41662e;\">" + temp2[0] + "</span><span style=\"color:#ff2872;\"> -  (" + temp2[1] + ")</span><br/>";
+                        }
+                    }
+
+                    trlast = table.insertRow(-1);
+                    var tabCelllast = trlast.insertCell(-1);
+                    tabCelllast.style.border = "thin solid #a5f448";
+                    tabCelllast.colSpan = "5";
+                    tabCelllast.innerHTML = "<br/><br/>";
+                  //  tabCell.innerHTML = obj.data[i].region;
+
+          //  }
+        }
+
+        // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+        
+        document.getElementById('showData').innerHTML = '';
+        document.getElementById('showData').appendChild(table);
+
+
+
+
+
+
+
+            }).catch(err => {
+              console.log('Error');
+              console.log(err);
+              document.getElementById('output').innerHTML = err.message;
+            })
+          }
+
+       // }
+  </script>
+</head >
+      <body>
+        <div id="output">
+        </div>
+
+<div id="showDatafirst">
+        </div>
+
+
+          <table id="datatable01" cellpadding="0" cellspacing="0">
+          </table>
+
+<div id="showData">
+        </div>
+
+</body>
+</html>
